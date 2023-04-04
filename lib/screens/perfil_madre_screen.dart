@@ -277,7 +277,7 @@ class _HijosSection extends StatelessWidget {
         
               AppTheme.spacingWidget5,
         
-              /* // Hijo 1
+              // Hijo 1
               const CardHijo(
                 nombre: "Luquitas",
                 linkImg: "https://firebasestorage.googleapis.com/v0/b/iron-kids-app.appspot.com/o/AvatarChild%2Fboy_avatar.png?alt=media&token=11a7b731-6753-4dbe-a095-4249be3fd1d9",
@@ -289,7 +289,7 @@ class _HijosSection extends StatelessWidget {
               const CardHijo(
                 nombre: "Sofia",
                 linkImg: "https://firebasestorage.googleapis.com/v0/b/iron-kids-app.appspot.com/o/AvatarChild%2Fgirl_avatar.png?alt=media&token=0af88513-e1fb-416f-9dfc-88b561635785",
-              ), */
+              ),
             ],
           ),
         ),

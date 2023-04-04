@@ -62,17 +62,17 @@ class _ControlAnemiaScreenState extends State<ControlAnemiaScreen> {
 
                         // * Botones de los hijos
                         Row(
-                          children: const [
-                            /* const CardHijo(
+                          children: [
+                            const CardHijo(
                               linkImg:
                                   'https://firebasestorage.googleapis.com/v0/b/iron-kids-app.appspot.com/o/AvatarChild%2Fboy_avatar.png?alt=media&token=11a7b731-6753-4dbe-a095-4249be3fd1d9',
                               nombre: 'Luquitas',
                             ),
-                            AppTheme.spacingWidget4, */
-                            CardHijo(
-                                linkImg:
-                                    'https://firebasestorage.googleapis.com/v0/b/iron-kids-app.appspot.com/o/AvatarChild%2Fgirl_avatar_2.png?alt=media&token=8f716cc4-93c4-4d80-8ba1-9c984cd454e9',
-                                nombre: 'Maia'),
+                            AppTheme.spacingWidget4,
+                            const CardHijo(
+                              linkImg:
+                                  'https://firebasestorage.googleapis.com/v0/b/iron-kids-app.appspot.com/o/AvatarChild%2Fgirl_avatar.png?alt=media&token=0af88513-e1fb-416f-9dfc-88b561635785',
+                              nombre: 'Maia'),
                           ],
                         ),
                         AppTheme.spacingWidget7,
