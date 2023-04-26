@@ -43,6 +43,22 @@ class Receta {
       pasos: json['pasos'],
     );
   }
+
+  /* static Receta fromSnapshot (DocumentSnapshot snapshot){
+    return Receta(
+      id: snapshot.data()!["asd"],
+      titulo: snapshot.data['titulo'],
+      imagen: snapshot.data['imagen'],
+      imagenXL: snapshot.data['imagenXL'],
+      tiempo: snapshot.data['tiempo'],
+      likes: snapshot.data['likes'],
+      liked: snapshot.data['liked'],
+      region: snapshot.data['region'],
+      edad: snapshot.data['edad'],
+      ingredientes: snapshot.data['ingredientes'],
+      pasos: snapshot.data['pasos']
+    );
+  } */
 }
 
 class RecetasService {

@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:iron_kids/bloc/receta_bloc/receta_bloc.dart';
+import 'package:iron_kids/nav_bar_routes.dart';
 import 'package:iron_kids/screens/recetas/recetas_details.dart';
 import 'package:iron_kids/styles/app_theme.dart';
 import 'package:iron_kids/models/recetas.dart';
@@ -9,6 +11,8 @@ import 'package:iron_kids/styles/widgets/filter_chips.dart';
 TextEditingController controllerBuscarReceta = TextEditingController();
 
 bool _filterChipValue = true;
+
+RecetasBloc _recetasBloc = RecetasBloc();
 
 class RecetasScreen extends StatefulWidget {
   const RecetasScreen({Key? key}) : super(key: key);
@@ -20,123 +24,132 @@ class RecetasScreen extends StatefulWidget {
 class _RecetasScreenState extends State<RecetasScreen> {
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                //Spacing 20px
-                AppTheme.spacingWidget10,
-
-                //Titulo
-                ScreenApp(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Recetas',
-                        style: textTheme.headlineLarge,
-                        
-                      ),
-                
-                      //Spacing 20px
-                      AppTheme.spacingWidget6,
-                
-                      // Buscador de recetas
-                      const BuscaReceta(),
-                    ],
-                  ),
-                ),
-
-                //Botones filtros
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  physics: const BouncingScrollPhysics(),
-                  child: Row(
-                    children: <Widget>[
-                      for (final filtro in _list)
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: AppTheme.spacing6,
-                            right: AppTheme.spacing6,
-                            top: AppTheme.spacing4,
-                          ),
-                          child: MyFilterChip(
-                            selected: _filterChipValue,
-                            onSelected: (value) {
-                              setState(() {
-                                _list.clear();
-                              });
-                            },
-                            label: filtro.text,
-                            closeMark: true,
-                          ),
-                        )
-                    ],
-                  ),
-                ),
-                
-                AppTheme.spacingWidget6,
-
-                //Recetas
-                Center(
-                  child: FutureBuilder<List<Receta>>(
-                    future: RecetasService.obtenerRecetas(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {  
-                        List<Receta>? recetas = [];
-                        if(_list.isEmpty){
-                          recetas = snapshot.data;
-                        }else{
-                          for (final receta in snapshot.data!){
-                            if(receta.id == 1 || receta.id == 3) recetas.add(receta);
-                          }
-                        }
-                        
-                        return Wrap(
-                          spacing: AppTheme.spacing6,
-                          runSpacing: AppTheme.spacing6,
-                          children: <Widget>[
-                            for (final receta in recetas!)
-                              CardRecetaLarge(
-                                onPressed: (){
-                                  Navigator.push(
-                                    context,
-                                    CupertinoPageRoute(
-                                      builder: (BuildContext context) => RecetasDetailsScreen(receta: receta)
-                                    )
-                                  );
-                                },
-                                linkImg: receta.imagen,
-                                titulo: receta.titulo,
-                                tiempo: receta.tiempo,
-                                likes: receta.likes,
-                                edad: receta.edad,
-                                liked: receta.titulo.length < 18 ? false : true,
-                              ) 
-                          ]
-                        );
-                      }else if(snapshot.hasError){
-                        return const Text('Error al cargar las recetas');
-                      }  
-                      return const CircularProgressIndicator();
-                    }
-                  ),
-                )
-              ]
-            ),
-          );
-  }
-}
-
-/* Navigator(
+    return Navigator(
       key: navigatorKeys[indexRecetasScreen],
       onGenerateRoute: (settings) => MaterialPageRoute(
         builder: (context) {
-          return 
-
+          return SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: StreamBuilder<List<String>>(
+              stream: _recetasBloc.listFilterStream,
+              builder: (context, snapshot) {
+                if(snapshot.hasData){
+                  List<String> listFilter = snapshot.data!;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      //Spacing 20px
+                      AppTheme.spacingWidget10,
+              
+                      //Titulo
+                      ScreenApp(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Recetas',
+                              style: textTheme.headlineLarge,
+                              
+                            ),
+                      
+                            //Spacing 20px
+                            AppTheme.spacingWidget6,
+                      
+                            // Buscador de recetas
+                            const BuscaReceta(),
+                          ],
+                        ),
+                      ),
+              
+                      //Botones filtros
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        child: Row(
+                          children: <Widget>[
+                            for (final filtro in listFilter)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: AppTheme.spacing6,
+                                  right: AppTheme.spacing6,
+                                  top: AppTheme.spacing4,
+                                ),
+                                child: MyFilterChip(
+                                  selected: _filterChipValue,
+                                  onSelected: (value) {
+                                    setState(() {
+                                      _list.clear();
+                                    });
+                                  },
+                                  label: filtro,
+                                  closeMark: true,
+                                ),
+                              )
+                          ],
+                        ),
+                      ),
+                      
+                      AppTheme.spacingWidget6,
+              
+                      //Recetas
+                      Center(
+                        child: FutureBuilder<List<Receta>>(
+                          future: RecetasService.obtenerRecetas(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {  
+                              List<Receta>? recetas = snapshot.data;
+              
+                              // Codigo para mostrar solo las recetas "buscadas" por Google Assistant
+                              /* if(_list.isEmpty){
+                                recetas = snapshot.data;
+                              }else{
+                                for (final receta in snapshot.data!){
+                                  if(receta.id == 1 || receta.id == 3) recetas.add(receta);
+                                }
+                              } */
+                              
+                              return Wrap(
+                                spacing: AppTheme.spacing6,
+                                runSpacing: AppTheme.spacing6,
+                                children: <Widget>[
+                                  for (final receta in recetas!)
+                                    CardRecetaLarge(
+                                      onPressed: (){
+                                        Navigator.push(
+                                          context,
+                                          CupertinoPageRoute(
+                                            builder: (BuildContext context) => RecetasDetailsScreen(receta: receta)
+                                          )
+                                        );
+                                      },
+                                      linkImg: receta.imagen,
+                                      titulo: receta.titulo,
+                                      tiempo: receta.tiempo,
+                                      likes: receta.likes,
+                                      edad: receta.edad,
+                                      liked: receta.titulo.length < 18 ? false : true,
+                                    ) 
+                                ]
+                              );
+                            }else if(snapshot.hasError){
+                              return const Text('Error al cargar las recetas');
+                            }  
+                            return const CircularProgressIndicator();
+                          }
+                        ),
+                      )
+                    ]
+                  );
+                }else{
+                  return const Center(child: CircularProgressIndicator());
+                }
+              }
+            ),
+          );
         }
       )
-    ); */
+    );
+  }
+}
 
 //Estructura
 class BuscaReceta extends StatelessWidget {
@@ -188,65 +201,6 @@ class BotonsFilter extends StatelessWidget {
   }
 }
 
-class ListaRecetas extends StatefulWidget {
-  const ListaRecetas({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  State<ListaRecetas> createState() => _ListaRecetasState();
-}
-
-class _ListaRecetasState extends State<ListaRecetas> {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: FutureBuilder<List<Receta>>(
-        future: RecetasService.obtenerRecetas(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {  
-            List<Receta>? recetas = [];
-            if(_list.isEmpty){
-              recetas = snapshot.data;
-            }else{
-              for (final receta in snapshot.data!){
-                if(receta.id == 1 || receta.id == 3) recetas.add(receta);
-              }
-            }
-            
-            return Wrap(
-              spacing: AppTheme.spacing6,
-              runSpacing: AppTheme.spacing6,
-              children: <Widget>[
-                for (final receta in recetas!)
-                  CardRecetaLarge(
-                    onPressed: (){
-                      Navigator.push(
-                        context,
-                        CupertinoPageRoute(
-                          builder: (BuildContext context) => RecetasDetailsScreen(receta: receta)
-                        )
-                      );
-                    },
-                    linkImg: receta.imagen,
-                    titulo: receta.titulo,
-                    tiempo: receta.tiempo,
-                    likes: receta.likes,
-                    edad: receta.edad,
-                    liked: receta.titulo.length < 18 ? false : true,
-                  ) 
-              ]
-            );
-          }else if(snapshot.hasError){
-            return const Text('Error al cargar las recetas');
-          }  
-          return const CircularProgressIndicator();
-        }
-      ),
-    );
-  }
-}
-
 // Widget locals
 
 // lista de filtros
@@ -277,7 +231,7 @@ class _ListFilterState extends State<ListFilter> {
   }
 }
 
-List<Filtros> _list = [
+final List<Filtros> _list = [
   //Filtros(id: 0, color: AppTheme.primary50, text: 'Papa amarilla'),
 ];
 
