@@ -18,80 +18,79 @@ class _MediaFeedScreenState extends State<MediaFeedScreen> {
   @override
   Widget build(BuildContext context) {
     return Navigator(
-      key: navigatorKeys[indexMediaFeedScreen],
-      onGenerateRoute: (settings) => MaterialPageRoute(
-        builder: (context) {
-          return Scaffold(
-          appBar: AppBar(
-            shadowColor: AppTheme.gray50,
-            elevation: 3,
-            backgroundColor: AppTheme.white,
-            toolbarHeight: screenH * 1 / 12,
-            title: Text(
-              "Niños de Hierro",
-              style: textTheme.headlineLarge!.copyWith(color: AppTheme.gray800),
-            ),
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: AppTheme.spacing4),
-                child: Material(
-                  elevation: 0,
-                  shape: const CircleBorder(),
-                  clipBehavior: Clip.antiAlias,
-                  color: Colors.transparent,
-                  child: Ink.image(
-                    image: NetworkImage(imagenUsuaria),
-                    width: 50,
-                    height: 50,
-                    child: InkWell(
-                      onTap: () {
-                        // Yendo a la pantalla PerfilMadre
-                        selectedIndexGlobal.value = indexPerfilMadreScreen;
-                      },
-                    ),
+        key: navigatorKeys[indexMediaFeedScreen],
+        onGenerateRoute: (settings) => MaterialPageRoute(builder: (context) {
+              return Scaffold(
+                appBar: AppBar(
+                  shadowColor: AppTheme.gray50,
+                  elevation: 3,
+                  backgroundColor: AppTheme.white,
+                  toolbarHeight: screenH * 1 / 12,
+                  title: Text(
+                    "Niños de Hierro",
+                    style: textTheme.headlineLarge!
+                        .copyWith(color: AppTheme.gray800),
                   ),
+                  actions: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: AppTheme.spacing4),
+                      child: Material(
+                        elevation: 0,
+                        shape: const CircleBorder(),
+                        clipBehavior: Clip.antiAlias,
+                        color: Colors.transparent,
+                        child: Ink.image(
+                          image: const NetworkImage(imagenUsuaria),
+                          width: 50,
+                          height: 50,
+                          child: InkWell(
+                            onTap: () {
+                              // Yendo a la pantalla PerfilMadre
+                              selectedIndexGlobal.value =
+                                  indexPerfilMadreScreen;
+                            },
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
                 ),
-              )
-            ],
-          ),
-          body: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(children: [
-                  //Spacing 20px
-                  AppTheme.spacingWidget6,
-        
-                  // Tarjeta control de anemia
-                  const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: AppTheme.spacing6),
-                      child: _ControlAnemiaSection()),
-        
-                  // Spacing 20px
-                  AppTheme.spacingWidget5,
-        
-                  // Recomendados
-                  const _RecomendadosSection(),
-        
-                  // Spacing 20px
-                  AppTheme.spacingWidget6,
-        
-                  // Publicaciones
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: AppTheme.spacing6),
-                    child: _PublicacionesSection(),
-                  )
-                ]
-              ),
-            ),
-          );
-        }
-      )
-    );
+                body: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(children: [
+                    //Spacing 20px
+                    AppTheme.spacingWidget6,
+
+                    // Tarjeta control de anemia
+                    const Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: AppTheme.spacing6),
+                        child: _ControlAnemiaSection()),
+
+                    // Spacing 20px
+                    AppTheme.spacingWidget5,
+
+                    // Recomendados
+                    const _RecomendadosSection(),
+
+                    // Spacing 20px
+                    AppTheme.spacingWidget6,
+
+                    // Publicaciones
+                    const Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: AppTheme.spacing6),
+                      child: _PublicacionesSection(),
+                    )
+                  ]),
+                ),
+              );
+            }));
   }
 }
 
 // Secciones
 class _PublicacionesSection extends StatelessWidget {
-
   const _PublicacionesSection({
     Key? key,
   }) : super(key: key);
@@ -101,7 +100,6 @@ class _PublicacionesSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
         // Titulo
         Text("Publicaciones", style: textTheme.headlineSmall),
 
@@ -123,7 +121,8 @@ class _PublicacionesSection extends StatelessWidget {
               Expanded(
                 child: TextField(
                   maxLines: 4,
-                  style: textTheme.labelLarge!.copyWith(color: AppTheme.gray700),
+                  style:
+                      textTheme.labelLarge!.copyWith(color: AppTheme.gray700),
                   decoration: InputDecoration(
                     hintText: 'Escribe algo...',
                     border: InputBorder.none,
@@ -151,8 +150,10 @@ class _PublicacionesSection extends StatelessWidget {
 
         // Publicaciones
         ListView.builder(
-          shrinkWrap: true, // Solucion para que el listview se ajuste a su contenido
-          physics: const NeverScrollableScrollPhysics(), // Deshabilita el scroll del listview
+          shrinkWrap:
+              true, // Solucion para que el listview se ajuste a su contenido
+          physics:
+              const NeverScrollableScrollPhysics(), // Deshabilita el scroll del listview
           itemCount: publicacionesLista.length,
           itemBuilder: (BuildContext context, int index) {
             return Padding(
@@ -161,7 +162,6 @@ class _PublicacionesSection extends StatelessWidget {
             );
           },
         ),
-
       ],
     );
   }
@@ -263,46 +263,45 @@ class _RecomendadosSection extends StatelessWidget {
 
         // Carrusel de recetas recomendadas
         SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          scrollDirection: Axis.horizontal,
-          child: FutureBuilder<List<Receta>>(
-            future: RecetasService.obtenerRecetas(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final recetas = snapshot.data;
-                return Row(
-                  children: [
-                    for (final receta in recetas!)
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: receta.id == 0
-                                ? AppTheme.spacing6
-                                : AppTheme.spacing4),
-                        child: CardRecetaSmall(
-                          linkImg: receta.imagen,
-                          titulo: receta.titulo,
-                          tiempo: receta.tiempo,
-                          likes: receta.likes,
-                          edad: receta.edad,
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (BuildContext context) => RecetasDetailsScreen(receta: receta)
-                              )
-                            );
-                          },
-                        ),
-                      )
-                  ],
-                );
-              } else if (snapshot.hasError) {
-                return const Text('Error al cargar las recetas');
-              }
-              return const CircularProgressIndicator();
-            },
-          )
-        ),
+            physics: const BouncingScrollPhysics(),
+            scrollDirection: Axis.horizontal,
+            child: FutureBuilder<List<Receta>>(
+              future: RecetasService.obtenerRecetas(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final recetas = snapshot.data;
+                  return Row(
+                    children: [
+                      for (final receta in recetas!)
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: receta.id == 0
+                                  ? AppTheme.spacing6
+                                  : AppTheme.spacing4),
+                          child: CardRecetaSmall(
+                            linkImg: receta.imagen,
+                            titulo: receta.titulo,
+                            tiempo: receta.tiempo,
+                            likes: receta.likes,
+                            edad: receta.edad,
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          RecetasDetailsScreen(
+                                              receta: receta)));
+                            },
+                          ),
+                        )
+                    ],
+                  );
+                } else if (snapshot.hasError) {
+                  return const Text('Error al cargar las recetas');
+                }
+                return const CircularProgressIndicator();
+              },
+            )),
       ],
     );
   }
