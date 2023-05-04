@@ -29,7 +29,10 @@ class MyFilterChip extends StatelessWidget {
         children: [
           FilterChip(
             showCheckmark: checkMark,
-            labelStyle: textTheme.labelLargeMedium.copyWith(color: selected ? AppTheme.primary600 : AppTheme.gray500),
+            labelStyle: textTheme.labelLargeMedium.copyWith(
+              color: selected ? AppTheme.primary600 : AppTheme.gray500,
+              fontWeight: selected ? FontWeight.w600 : FontWeight.w500
+            ),
             labelPadding: EdgeInsets.only(
               left: AppTheme.spacing4,
               right: closeMark ? AppTheme.spacing2 :AppTheme.spacing4,
@@ -42,7 +45,7 @@ class MyFilterChip extends StatelessWidget {
             checkmarkColor: AppTheme.white,
             selectedColor: AppTheme.primary50,
             label: Text(label),
-            onSelected: onSelected ?? (value) {}
+            onSelected: onSelected ?? (value) { print("no funcionando parametros");}
           ),
           closeMark ? Icon(Icons.close, size: 20, color: AppTheme.primary600) : Container(),
           closeMark ? AppTheme.spacingWidget4 : Container()
