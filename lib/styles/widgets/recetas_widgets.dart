@@ -38,13 +38,26 @@ class CardRecetaSmall extends StatelessWidget {
                       aspectRatio: 1,
                       child: Container(
                         decoration: BoxDecoration(
-                          borderRadius:
-                              AppTheme.borderRadiusL,
-                          image: DecorationImage(
+                          borderRadius: AppTheme.borderRadiusL,
+                          /* image: DecorationImage(
                             image: NetworkImage(linkImg),
                             fit: BoxFit.cover,
-                          )
+                            onError: (exception, stackTrace) {
+                              return const AssetImage('assets/images/placeholder.png');
+                            },
+                          ), */
                         ),
+                        child: ClipRRect(
+                          borderRadius: AppTheme.borderRadiusL,
+                          child: Image.network(
+                            linkImg,
+                            fit: BoxFit.cover,
+                            errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                              // En caso de error, se muestra una imagen de reemplazo
+                              return const Placeholder();
+                            },
+                          ),
+                        )
                       ),
                     ),
                     AspectRatio(
@@ -172,14 +185,25 @@ class CardRecetaLarge extends StatelessWidget {
                 AspectRatio(
                   aspectRatio: 3/2,
                   child: Container(
-                    decoration: BoxDecoration(
+                    /* decoration: BoxDecoration(
                       borderRadius:
                           AppTheme.borderRadiusL,
                       image: DecorationImage(
                         image: NetworkImage(linkImg),
                         fit: BoxFit.cover,
-                      )
-                    ),
+                        onError: (exception, stackTrace) {
+                          return const AssetImage('assets/images/placeholder.png');
+                        },
+                      ),
+                    ), */
+                    child: Image.network(
+                      linkImg,
+                      fit: BoxFit.cover,
+                      errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                        // En caso de error, se muestra una imagen de reemplazo
+                        return const Placeholder();
+                      },
+                    )
                   ),
                 ),
       
