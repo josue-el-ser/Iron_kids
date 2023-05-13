@@ -35,7 +35,7 @@ class ImageBack extends StatelessWidget {
           ),
         ),
         child: Image.network(
-            'https://firebasestorage.googleapis.com/v0/b/iron-kids-app.appspot.com/o/Ilustraciones%2FMotherhood.png?alt=media&token=8d51fdd4-297b-468e-91ff-bcf2158196f4'),
+            'https://firebasestorage.googleapis.com/v0/b/iron-kids-app.appspot.com/o/Ilustraciones%2Fmom2.png?alt=media&token=f3cbd601-29be-4638-b286-f0eac41204a6'),
       ),
     );
   }
@@ -51,8 +51,8 @@ class FormSignUp extends StatelessWidget {
       height: 500,
       padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacing6),
       decoration: BoxDecoration(
-        color: AppTheme.primary400,
-        borderRadius: AppTheme.borderRadiusM,
+        color: AppTheme.gray100,
+        borderRadius: AppTheme.borderRadiusXL,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -65,7 +65,7 @@ class FormSignUp extends StatelessWidget {
           ),
           AppTheme.spacingWidget2,
           Text(
-            '¡Créate una cuenta para que puedas guardar tus controles y registros!',
+            '¡Create una cuenta para que puedas guardar tus controles y registros!',
             style: textTheme.bodySmall,
             textAlign: TextAlign.center,
           ),
@@ -89,7 +89,6 @@ class FormSignUp extends StatelessWidget {
           ),
           AppTheme.spacingWidget6,
           Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
@@ -97,17 +96,25 @@ class FormSignUp extends StatelessWidget {
                 height: 2,
                 width: 100,
               ),
+              AppTheme.spacingWidget4,
               Text(
-                'O registrate con',
+                'O regístrate con',
                 style: textTheme.bodySmall,
               ),
+              AppTheme.spacingWidget4,
               Container(
                 color: AppTheme.gray400,
                 height: 2,
                 width: 100,
               ),
             ],
-          )
+          ),
+          AppTheme.spacingWidget6,
+          const ButtonOutlined(
+            'Ingresa con Google',
+            size: 2,
+            iconLeft: Icons.g_mobiledata,
+          ),
         ],
       ),
     );
