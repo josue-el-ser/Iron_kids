@@ -4,16 +4,14 @@ MyTextTheme textTheme = MyTextTheme();
 
 // ThemeData donde se definen los varlores propios
 ThemeData themeData = ThemeData(
-  scaffoldBackgroundColor: AppTheme.white,
-  primarySwatch: myPrimarySwatch,
-  colorScheme: ColorScheme.fromSwatch().copyWith(
-    primary: AppTheme.primary500,
-    secondary: AppTheme.primary500,
-    background: Colors.white
-  ),
-  fontFamily: "Inter", 
-  textTheme: MyTextTheme()
-);
+    scaffoldBackgroundColor: AppTheme.white,
+    primarySwatch: myPrimarySwatch,
+    colorScheme: ColorScheme.fromSwatch().copyWith(
+        primary: AppTheme.primary500,
+        secondary: AppTheme.primary500,
+        background: Colors.white),
+    fontFamily: "Inter",
+    textTheme: MyTextTheme());
 
 // Swatch de colores propios
 const MaterialColor myPrimarySwatch = MaterialColor(
@@ -31,7 +29,6 @@ const MaterialColor myPrimarySwatch = MaterialColor(
     900: Color(0xff772f30),
   },
 );
-
 
 // TextTheme con los estilos Material3 modificados, y estilos propios añadidos
 // ignore: must_be_immutable
@@ -82,10 +79,8 @@ class MyTextTheme extends TextTheme {
       fontSize: 16, fontWeight: FontWeight.w500, color: AppTheme.gray600);
 }
 
-
-// Bordes redondeados, colores primarios, grises, spacing, spacingWidget, 
+// Bordes redondeados, colores primarios, grises, spacing, spacingWidget,
 class AppTheme {
-
   // Borde Redondeados
   static BorderRadius borderRadiusXL = BorderRadius.circular(40);
   static BorderRadius borderRadiusL = BorderRadius.circular(16);
@@ -140,19 +135,18 @@ class AppTheme {
 
   //Gray Scale
   static const Color white = Color(0xffffffff);
-  static Color gray50 = const Color(0xfffcfcfd);
-  static Color gray100 = const Color(0xffF3F8FC);
-  static Color gray200 = const Color(0xffe7eaf0);
-  static Color gray300 = const Color(0xffcfd6df);
-  static Color gray400 = const Color(0xffabb6c5);
-  static Color gray500 = const Color(0xff8898a9);
-  static Color gray600 = const Color(0xff6c7b91);
-  static Color gray700 = const Color(0xff475068);
-  static Color gray800 = const Color(0xff2d3748);
-  static Color gray900 = const Color(0xff16192c);
-
+  static Color gray50 = const Color(0xffF0F1F5);
+  static Color gray100 = const Color(0xffE6E8EF);
+  static Color gray200 = const Color(0xffCED1DE);
+  static Color gray300 = const Color(0xffAFB4CA);
+  static Color gray400 = const Color(0xff9197B6);
+  static Color gray500 = const Color(0xff727AA1);
+  static Color gray600 = const Color(0xff5A6187);
+  static Color gray700 = const Color(0xff454B68);
+  static Color gray800 = const Color(0xff313549);
+  static Color gray900 = const Color(0xff313549);
 }
 
-
 const String nombreUsuaria = "Liliana Vilca";
-const String imagenUsuaria = "https://firebasestorage.googleapis.com/v0/b/iron-kids-app.appspot.com/o/Profile%2Fphoto_andrea_huamani.png?alt=media&token=5c9d581f-5d0e-4812-af2c-5cfb6af473be";
+const String imagenUsuaria =
+    "https://firebasestorage.googleapis.com/v0/b/iron-kids-app.appspot.com/o/Profile%2Fphoto_andrea_huamani.png?alt=media&token=5c9d581f-5d0e-4812-af2c-5cfb6af473be";

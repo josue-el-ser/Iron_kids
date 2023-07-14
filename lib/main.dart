@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iron_kids/nav_bar_routes.dart';
 import 'package:iron_kids/route_generator.dart';
-import 'package:iron_kids/screens/signup_screen.dart';
 import 'package:iron_kids/styles/app_theme.dart';
 
 void main() {
@@ -26,7 +25,7 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,
         theme: themeData,
-        home: const SignUpScreen());
+        home: const HomeScreen());
   }
 }
 

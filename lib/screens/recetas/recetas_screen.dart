@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iron_kids/bloc/receta_bloc/receta_bloc.dart';
 import 'package:iron_kids/bloc/receta_bloc/receta_event.dart';
+import 'package:iron_kids/bloc/receta_bloc/receta_state.dart';
 import 'package:iron_kids/main.dart';
 import 'package:iron_kids/screens/recetas/recetas_details.dart';
 import 'package:iron_kids/styles/app_theme.dart';
@@ -14,11 +15,16 @@ TextEditingController controllerBuscarReceta = TextEditingController();
 bool _filterChipValue = true;
 
 RecetasBloc _recetasBloc = RecetasBloc();
+RecetasState recetasStateGlobal = RecetasState();
 
-List<Filtro> _listFilter  = [];
-List<String> listaRegiones = ["Costa", "Sierra", "Selva"];
+List<Filtro> _listFilter = [];
+List<Filtro> listaRegiones = [
+  Filtro(categoria: "region", valor: "Costa"),
+  Filtro(categoria: "region", valor: "Sierra"),
+  Filtro(categoria: "region", valor: "Selva"),
+];
+
 List<String> listaRegionesSelected = [];
-
 
 class RecetasScreen extends StatefulWidget {
   const RecetasScreen({Key? key}) : super(key: key);
@@ -31,9 +37,9 @@ class _RecetasScreenState extends State<RecetasScreen> {
   @override
   void initState() {
     super.initState();
-    _recetasBloc.sendEvent.add(GetRecetasEvent());
+    _recetasBloc.sendEvent.add(OnFetchRecetasEvent());
   }
-  
+
   @override
   void dispose() {
     _recetasBloc.dispose();
@@ -42,224 +48,245 @@ class _RecetasScreenState extends State<RecetasScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      endDrawer: SafeArea(
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(16),
-            bottomLeft: Radius.circular(16),
-          ),
-          child: Drawer(
-            width: screenW * 3/4,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppTheme.spacing5,
-                vertical: AppTheme.spacing8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Filtrar por", style: textTheme.headlineLarge,),
-                      ButtonIcon(icon: Icons.close, onPressed: (){
-                        Navigator.pop(context);
-                      },)
-                    ],
-                  ),
-                  AppTheme.spacingWidget6,
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: AppTheme.borderRadiusS,
-                      color: AppTheme.gray200
-                    ),
-                    width: double.infinity,
+    return StreamBuilder<RecetasState>(
+        stream: _recetasBloc.stream,
+        initialData: recetasStateGlobal,
+        builder: (context, snapshot) {
+          recetasStateGlobal = snapshot.data!;
+          return Scaffold(
+            endDrawer: SafeArea(
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  bottomLeft: Radius.circular(16),
+                ),
+                child: Drawer(
+                  width: screenW * 3 / 4,
+                  child: Padding(
                     padding: const EdgeInsets.symmetric(
-                      vertical: AppTheme.spacing2,
-                      horizontal: AppTheme.spacing4
-                    ),
-                    child: Text("Región", style: textTheme.headlineSmall,)
-                  ),
-                  AppTheme.spacingWidget4,
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: listaRegiones.map((String region){
-                      return MyFilterChip(
-                        selected: listaRegionesSelected.contains(region),
-                        onSelected: (value) {
-                          setState(() {
-                            if (listaRegionesSelected.contains(region)) {
-                              listaRegionesSelected.removeWhere((element) =>
-                                element == region
-                              );
-                              _listFilter.removeWhere((element) => 
-                                element.valor == region  
-                              );
-                            }else{
-                              listaRegionesSelected.add(region);
-                              _listFilter.add(Filtro(categoria: "region", valor: region));
-                            }
-                            _recetasBloc..sendEvent.add(OnFilterChangeEvent(_listFilter));
-                          });
-                        },
-                        label: region
-                      );
-                    }).toList()
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: StreamBuilder<List<Filtro>>(
-          stream: _recetasBloc.listFilterStream,
-          builder: (context, snapshot) {
-            if(snapshot.hasData){
-              _listFilter = snapshot.data!;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  //Spacing 20px
-                  AppTheme.spacingWidget10,
-          
-                  //Titulo
-                  ScreenApp(
+                        horizontal: AppTheme.spacing5,
+                        vertical: AppTheme.spacing8),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Recetas',
-                          style: textTheme.headlineLarge,
-                          
+                      children: <Widget>[
+                        // Titulo de Modal con boton cerrar
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Filtrar por",
+                              style: textTheme.headlineLarge,
+                            ),
+                            ButtonIcon(
+                              icon: Icons.close,
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            )
+                          ],
                         ),
-                  
-                        //Spacing 20px
                         AppTheme.spacingWidget6,
-                  
-                        // Buscador de recetas
-                        SizedBox(
-                          // width: screenW,
-                        
-                          child: Row(
+
+                        // Subtitulo REGION
+                        Container(
+                            decoration: BoxDecoration(
+                                borderRadius: AppTheme.borderRadiusS,
+                                color: AppTheme.gray200),
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                                vertical: AppTheme.spacing2,
+                                horizontal: AppTheme.spacing4),
+                            child: Text(
+                              "Región",
+                              style: textTheme.headlineSmall,
+                            )),
+                        AppTheme.spacingWidget4,
+
+                        // Filtros REGION
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: listaRegiones.map((Filtro filtroRegion) {
+                              return MyFilterChip(
+                                  selected: recetasStateGlobal
+                                      .filtrosSeleccionados
+                                      .contains(filtroRegion),
+                                  onSelected: (value) {
+                                    if (recetasStateGlobal.filtrosSeleccionados
+                                        .contains(filtroRegion)) {
+                                      recetasStateGlobal.filtrosSeleccionados
+                                          .removeWhere((element) =>
+                                              element == filtroRegion);
+                                    } else {
+                                      recetasStateGlobal.filtrosSeleccionados
+                                          .add(filtroRegion);
+                                      _listFilter.add(filtroRegion);
+                                    }
+                                    _recetasBloc.sendEvent.add(
+                                        OnUpdateFiltrosSeleccionadosEvent(
+                                            recetasStateGlobal
+                                                .filtrosSeleccionados));
+                                  },
+                                  label: filtroRegion.getValorString);
+                            }).toList()),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            body: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Builder(builder: (context) {
+                if (snapshot.hasData) {
+                  return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        //Spacing 20px
+                        AppTheme.spacingWidget10,
+
+                        //Titulo
+                        ScreenApp(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-    
-                              //Buscador
-                              Expanded(
-                                flex: 6,
-                                child: InputField(
-                                  controller: controllerBuscarReceta,
-                                  placeholder: "Buscar receta",
-                                  iconLeft: Icons.search_rounded,
-                                )
+                              Text(
+                                'Recetas',
+                                style: textTheme.headlineLarge,
                               ),
-    
-                              //Spacing 8px
-                              AppTheme.spacingWidget3,
-                              
-                              //Boton
-                              ButtonPrimary(onPressed: (){
-                                /* _listFilter.add(Filtro(categoria: "liked", valor: true));
-                                _recetasBloc..sendEvent.add(OnFilterChangeEvent(_listFilter)); */
-    
-                                Scaffold.of(context).openEndDrawer();
-                              },'Filtrar', size: 2,)
+
+                              //Spacing 20px
+                              AppTheme.spacingWidget6,
+
+                              // Buscador de recetas
+                              SizedBox(
+                                // width: screenW,
+
+                                child: Row(
+                                  children: [
+                                    //Buscador
+                                    Expanded(
+                                        flex: 6,
+                                        child: InputField(
+                                          controller: controllerBuscarReceta,
+                                          placeholder: "Buscar receta",
+                                          iconLeft: Icons.search_rounded,
+                                        )),
+
+                                    //Spacing 8px
+                                    AppTheme.spacingWidget3,
+
+                                    //Boton
+                                    ButtonPrimary(
+                                      onPressed: () {
+                                        /* _listFilter.add(Filtro(categoria: "liked", valor: true));
+                                    _recetasBloc..sendEvent.add(OnFilterChangeEvent(_listFilter)); */
+
+                                        Scaffold.of(context).openEndDrawer();
+                                      },
+                                      'Filtrar',
+                                      size: 2,
+                                    )
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-          
-                  //Botones filtros
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    physics: const BouncingScrollPhysics(),
-                    child: Row(
-                      children: <Widget>[
-                        for (Filtro filtro in _listFilter)
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: AppTheme.spacing6,
-                              top: AppTheme.spacing4,
-                            ),
-                            child: MyFilterChip(
-                              selected: _filterChipValue,
-                              onSelected: (value) {
-                                print("Funcionando directo sin clase abstraida");
-                                _listFilter.removeWhere((element) => 
-                                  element.valor == filtro.valor
-                                );
-                                _recetasBloc..sendEvent.add(OnFilterChangeEvent(_listFilter));
-                              },
-                              label: filtro.toString(),
-                              closeMark: true,
-                            ),
-                          )
-                      ],
-                    ),
-                  ),
-                  
-                  AppTheme.spacingWidget6,
-          
-                  //Recetas
-                  Center(
-                    child: FutureBuilder<List<Receta>>(
-                      future: RecetasService.obtenerRecetas(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {  
-                          List<Receta>? recetas = snapshot.data;
-          
-                          // Codigo para mostrar solo las recetas "buscadas" por Google Assistant
-                          /* if(_listFiltros
-                          .isEmpty){
-                            recetas = snapshot.data;
-                          }else{
-                            for (final receta in snapshot.data!){
-                              if(receta.id == 1 || receta.id == 3) recetas.add(receta);
-                            }
-                          } */
-                          
-                          return Wrap(
-                            spacing: AppTheme.spacing6,
-                            runSpacing: AppTheme.spacing6,
+
+                        //Botones filtros
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          physics: const BouncingScrollPhysics(),
+                          child: Row(
                             children: <Widget>[
-                              for (final receta in recetas!)
-                                CardRecetaLarge(
-                                  onPressed: (){
-                                    Navigator.push(
-                                      context,
-                                      CupertinoPageRoute(
-                                        builder: (BuildContext context) => RecetasDetailsScreen(receta: receta)
-                                      )
-                                    );
-                                  },
-                                  linkImg: receta.imagen,
-                                  titulo: receta.titulo,
-                                  tiempo: receta.tiempo,
-                                  likes: receta.likes,
-                                  edad: receta.edad,
-                                  liked: receta.titulo.length < 18 ? false : true,
-                                ) 
-                            ]
-                          );
-                        }else if(snapshot.hasError){
-                          return const Text('Error al cargar las recetas');
-                        }  
-                        return const CircularProgressIndicator();
-                      }
-                    ),
-                  )
-                ]
-              );
-            }else{
-              return const Center(child: CircularProgressIndicator());
-            }
-          }
-        ),
-      ),
-    );
+                              for (Filtro filtro
+                                  in recetasStateGlobal.filtrosSeleccionados)
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: AppTheme.spacing6,
+                                    top: AppTheme.spacing4,
+                                  ),
+                                  child: MyFilterChip(
+                                    selected: _filterChipValue,
+                                    onSelected: (value) {
+                                      recetasStateGlobal.filtrosSeleccionados
+                                          .removeWhere(
+                                              (element) => element == filtro);
+
+                                      _recetasBloc
+                                        ..sendEvent.add(
+                                            OnUpdateFiltrosSeleccionadosEvent(
+                                                recetasStateGlobal
+                                                    .filtrosSeleccionados));
+                                    },
+                                    label: filtro.toString(),
+                                    closeMark: true,
+                                  ),
+                                )
+                            ],
+                          ),
+                        ),
+
+                        AppTheme.spacingWidget6,
+
+                        //Recetas
+                        Center(
+                          child: FutureBuilder<List<Receta>>(
+                              future: RecetasService.obtenerRecetas(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  List<Receta>? recetas = snapshot.data;
+
+                                  // Codigo para mostrar solo las recetas "buscadas" por Google Assistant
+                                  /* if(_listFiltros
+                              .isEmpty){
+                                recetas = snapshot.data;
+                              }else{
+                                for (final receta in snapshot.data!){
+                                  if(receta.id == 1 || receta.id == 3) recetas.add(receta);
+                                }
+                              } */
+
+                                  return Wrap(
+                                      spacing: AppTheme.spacing6,
+                                      runSpacing: AppTheme.spacing6,
+                                      children: <Widget>[
+                                        for (final receta in recetas!)
+                                          CardRecetaLarge(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                  context,
+                                                  CupertinoPageRoute(
+                                                      builder: (BuildContext
+                                                              context) =>
+                                                          RecetasDetailsScreen(
+                                                              receta: receta)));
+                                            },
+                                            linkImg: receta.imagen,
+                                            titulo: receta.titulo,
+                                            tiempo: receta.tiempo,
+                                            likes: receta.likes,
+                                            edad: receta.edad,
+                                            liked: receta.titulo.length < 18
+                                                ? false
+                                                : true,
+                                          )
+                                      ]);
+                                } else if (snapshot.hasError) {
+                                  return const Text(
+                                      'Error al cargar las recetas');
+                                }
+                                return const CircularProgressIndicator();
+                              }),
+                        )
+                      ]);
+                } else {
+                  return const Center(child: CircularProgressIndicator());
+                }
+              }),
+            ),
+          );
+        });
   }
 }
 
@@ -334,8 +361,9 @@ class Filtro {
 
   Filtro({this.id = 0, required this.categoria, required this.valor});
 
-  int get getNumeId => 0;
-  String get valorString => valor.toString();
+  int get getId => id;
+  String get getValorString => valor.toString();
+
   @override
   String toString() {
     switch (categoria) {

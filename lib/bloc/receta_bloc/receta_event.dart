@@ -2,10 +2,10 @@ import 'package:iron_kids/screens/recetas/recetas_screen.dart';
 
 abstract class RecetasEvent {}
 
-class OnFilterChangeEvent extends RecetasEvent {
-  final List<Filtro> value;
+class OnUpdateFiltrosSeleccionadosEvent extends RecetasEvent {
+  final List<Filtro> filtrosSeleccionados;
 
-  OnFilterChangeEvent(this.value);
+  OnUpdateFiltrosSeleccionadosEvent(this.filtrosSeleccionados);
 }
 
-class GetRecetasEvent extends RecetasEvent {}
+class OnFetchRecetasEvent extends RecetasEvent {}
